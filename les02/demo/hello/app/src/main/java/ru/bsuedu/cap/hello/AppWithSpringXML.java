@@ -12,4 +12,5 @@ public class AppWithSpringXML {
         MessageRenderer messageRenderer = ctx.getBean("renderer", MessageRenderer.class);
         messageRenderer.render();
      }
+
 }

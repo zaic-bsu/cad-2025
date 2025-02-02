@@ -7,7 +7,7 @@ import ru.bsuedu.cap.hello.impl.MessageProviderImpl;
 import ru.bsuedu.cap.hello.impl.MessageRendererImpl;
 
 @Configuration
-public class MessgeConfiguration {
+public class MessageConfiguration {
 
     @Bean
     MessageProvider  provider() {

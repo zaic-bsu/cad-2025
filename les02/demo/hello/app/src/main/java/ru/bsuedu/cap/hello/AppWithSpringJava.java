@@ -5,11 +5,10 @@ package ru.bsuedu.cap.hello;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class AppWithSpringJava {
     public static void main(String[] args) {
-    ApplicationContext ctx = new AnnotationConfigApplicationContext(MessgeConfiguration.class);
+    ApplicationContext ctx = new AnnotationConfigApplicationContext(MessageConfiguration.class);
     MessageRenderer mr = ctx.getBean("renderer", MessageRenderer.class);
     mr.render();
      }
