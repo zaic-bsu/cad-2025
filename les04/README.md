@@ -202,6 +202,7 @@ public class AppConfiguration {
 ## Конфигурирование с использование Java-конфигурации и ProxyFactoryBean
 
 Использование класса ProxyFactoryBean позволяет выполнить конфигурирование приложения декларативно.
+ProxyFactoryBean может сам, используя BeanFactory, получить необходимые ему зависимости.
 
 ```java
 @Configuration
