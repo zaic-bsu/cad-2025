@@ -91,14 +91,14 @@ classDiagram
     }
 
     class ProductProvider {
-        + List[Product] getGoods()
+        + List[Product] getProducts()
     }
     <<interface>> ProductProvider
 
     class ConcreteProductProvider{
         - Reader reader
         - Parser parser
-       + List[Product] getGoods()
+       + List[Product] getProducts()
     }
 
 
