@@ -15,7 +15,7 @@
 
     Проект должен иметь следующие параметры .
     + java пакет - ru.bsuedu.cad.lab (пакет задается так -  ```gradle init --package ru.bsuedu.cad.lab```, остальное в процессе настройки проекта)
-    + Project name - employee-table
+    + Project name - product-table
     + Type - Application
     + Language - Java
     + Java version - 17
@@ -86,7 +86,7 @@ classDiagram
     <<interface>> Renderer
 
     class ConsoleTableRenderer {
-        - GoodsProvider provider
+        - ProductProvider provider
         +void render()
     }
 
