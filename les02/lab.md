@@ -72,12 +72,12 @@ classDiagram
     }
 
     class  Parser{
-        + List[Product] perse(String)
+        + List[Product] parse(String)
     }
     <<interface>> Parser
 
     class CSVParser {
-        + List[Product] perse(String)
+        + List[Product] parse(String)
     }
 
     class  Renderer{
