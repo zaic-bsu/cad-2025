@@ -51,15 +51,15 @@ classDiagram
     Parser .. Product
 
     class  Product {
-        +long product_id
+        +long productId
         +String name
         +String description
-        +int category_id
+        +int categoryId
         +BigDecimal price
-        +int stock_quantity
-        +String image_url
-        +Date created_at
-        +Date updated_at
+        +int stockQuantity
+        +String imageUrl
+        +Date createdAt
+        +Date updatedAt
     }
 
     class  Reader{
