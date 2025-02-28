@@ -1,12 +1,19 @@
 package ru.bsuedu.cad.lab;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
 
-@Repository("personaDaoJdbcTemplate")
+@Repository("PersonaJdbcDaoSupport")
 public class PersonaJdbcDaoSupport  extends JdbcDaoSupport implements PersonaDao {
+
+   
+    public PersonaJdbcDaoSupport(JdbcTemplate jdbcTemplate) {
+         setJdbcTemplate(jdbcTemplate);
+     }
 
     // Получение персоны по ID
     @Override

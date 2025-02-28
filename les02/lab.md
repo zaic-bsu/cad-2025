@@ -90,6 +90,7 @@ classDiagram
         +void render()
     }
 
+
     class ProductProvider {
         + List[Product] getProducts()
     }

@@ -26,8 +26,10 @@ dependencies {
     implementation(libs.spring.context)
 
     implementation("org.slf4j:slf4j-api:2.1.0-alpha1") 
+
     implementation("ch.qos.logback:logback-core:1.5.6") 
     implementation("ch.qos.logback:logback-classic:1.5.6") 
+    
     implementation("org.springframework:spring-jdbc:6.2.2")
     implementation("com.h2database:h2:2.3.232")
     //implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")

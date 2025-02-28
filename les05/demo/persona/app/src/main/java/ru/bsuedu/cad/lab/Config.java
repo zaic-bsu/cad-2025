@@ -26,7 +26,7 @@ public class Config {
         try {
             var dbBuilder = new EmbeddedDatabaseBuilder();
             return dbBuilder.setType(EmbeddedDatabaseType.H2)
-                    .setName("jdbc:h2:file:~/persona.db")
+                    .setName("persona.db")
                     .addScripts("classpath:db/schema.sql",
                             "classpath:db/data.sql")
                     .build();
