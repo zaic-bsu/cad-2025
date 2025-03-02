@@ -127,13 +127,448 @@ ORM будет автоматически преобразовывать рез�
 
 **Hibernate** — это одна из самых популярных реализаций JPA. Он предоставляет мощный ORM (Object-Relational Mapping) механизм, позволяя разработчикам работать с базой данных через объектно-ориентированный подход.
 
+### Подключение Hibernate к  проекту  Spring.
+
+``` java
+@Configuration
+@ComponentScan(basePackages = "ru.bsuedu.cad.demo")
+public class ConfigHibernate {
+    private static Logger LOGGER = LoggerFactory.getLogger(ConfigBasic.class);
+
+    @Autowired
+    DataSource dataSource;
+
+    @Bean
+    public Properties hibernateProperties() {
+        Properties hibernateProp = new Properties();
+        hibernateProp.put(Environment.HBM2DDL_AUTO, "create-drop");
+        hibernateProp.put(Environment.DIALECT, "org.hibernate.dialect.H2Dialect");
+        hibernateProp.put(Environment.FORMAT_SQL, true);
+        hibernateProp.put(Environment.USE_SQL_COMMENTS, false);
+        hibernateProp.put(Environment.SHOW_SQL, true);
+        hibernateProp.put(Environment.MAX_FETCH_DEPTH, 3);
+        hibernateProp.put(Environment.STATEMENT_BATCH_SIZE, 10);
+        hibernateProp.put(Environment.STATEMENT_FETCH_SIZE, 50);
+        return hibernateProp;
+    }
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        var sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setPackagesToScan("ru.bsuedu.cad.demo.entities");
+        sessionFactory.setHibernateProperties(hibernateProperties());
+        return sessionFactory;
+    }
+}
+
+```
+
+
+| Свойство | Значение (пример) | Описание |
+|----------|------------------|----------|
+| `hibernate.dialect` | `org.hibernate.dialect.PostgreSQLDialect` | Указывает диалект базы данных. |
+| `hibernate.show_sql` | `true` | Показывает SQL-запросы в консоли. |
+| `hibernate.format_sql` | `true` | Форматирует SQL-запросы для удобного чтения. |
+| `hibernate.hbm2ddl.auto` | `update` | Стратегия управления схемой БД (`none`, `update`, `create`, `create-drop`). |
+| `hibernate.connection.driver_class` | `org.postgresql.Driver` | JDBC-драйвер для базы данных. |
+| `hibernate.connection.url` | `jdbc:postgresql://localhost:5432/mydb` | URL подключения к базе данных. |
+| `hibernate.connection.username` | `myuser` | Имя пользователя для подключения к БД. |
+| `hibernate.connection.password` | `mypassword` | Пароль пользователя БД. |
+| `hibernate.connection.pool_size` | `10` | Размер пула соединений. |
+| `hibernate.jdbc.batch_size` | `50` | Количество записей в батч-операции. |
+| `hibernate.cache.use_second_level_cache` | `true` | Включает второй уровень кэша. |
+| `hibernate.cache.use_query_cache` | `true` | Включает кэширование запросов. |
+| `hibernate.generate_statistics` | `true` | Включает сбор статистики выполнения Hibernate. |
+| `hibernate.order_inserts` | `true` | Оптимизирует вставку данных пакетами. |
+| `hibernate.order_updates` | `true` | Оптимизирует обновление данных пакетами. |
+| `hibernate.connection.autocommit` | `false` | Управляет автоматической фиксацией транзакций. |
+| `hibernate.default_schema` | `public` | Устанавливает схему базы данных по умолчанию. |
+
+### Концепции JPA
+
 | Концепция               | Описание |
 |-------------------------|----------|
 | **Entity**             | Класс, который представляет таблицу в БД. |
+| **Relationships**      | Определение связей между сущностями (`@OneToOne`, `@OneToMany`, `@ManyToMany`). |
+| **Inheritance Mapping** | Поддержка стратегий наследования (`Single Table`, `Joined`, `Table per Class`). |
 | **EntityManager**      | Основной интерфейс для работы с сущностями (CRUD-операции). |
 | **Persistence Context** | Контекст управления объектами, аналогичный Unit of Work. |
 | **JPQL (Java Persistence Query Language)** | Объектно-ориентированный язык запросов, аналог SQL. |
 | **Transactions**       | Управление транзакциями (`commit`, `rollback`). |
-| **Relationships**      | Определение связей между сущностями (`@OneToOne`, `@OneToMany`, `@ManyToMany`). |
-| **Inheritance Mapping** | Поддержка стратегий наследования (`Single Table`, `Joined`, `Table per Class`). |
 
+#### Entity
+
+В JPA сущность (Entity) — это класс, который представляет таблицу в базе данных.
+Чтобы определить Entity, нужно использовать аннотацию @Entity, а также указать первичный ключ с помощью @Id.
+
+```java
+@Entity
+@Table(name = "demo_student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID")
+    private Long id;
+
+    @Column(name="NAME", unique = false, nullable = false, length = 100)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "GROUP_ID")
+    private Group group;
+}
+```
+
+1. @Entity — отмечает класс как сущность JPA.
+2. @Table(name = "users") — указывает, что сущность соответствует таблице users (необязательно, если имя совпадает).
+3. @Id — определяет первичный ключ.
+4. @GeneratedValue(strategy = GenerationType.IDENTITY) — задает автоинкремент.
+5. @Column — используется для настройки колонок (уникальность, nullable, длина).
+
+Каждая сущность должна иметь @Id, который определяет первичный ключ.
+Можно выбрать стратегию генерации:
+
+|Стратегия|Описание|
+|--|--|
+|AUTO| Hibernate сам выбирает стратегию (по умолчанию).|
+|IDENTITY| Использует автоинкремент (SERIAL в PostgreSQL, AUTO_INCREMENT в MySQL).|
+|SEQUENCE| Использует SQL-секвенции (@SequenceGenerator).|
+|TABLE|Хранит значения ключей в специальной таблице.|
+
+``` java
+    @Id
+    @SequenceGenerator(name = "student_seq", sequenceName = "student_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_seq")
+    private Long id;
+```
+
+#### Relationships
+
+##### Аннотация @OneToMany в JPA/Hibernate
+
+Аннотация @OneToMany в JPA используется для установления связи “один ко многим” между сущностями. Это означает, что одна запись в одной таблице может быть связана с несколькими записями в другой таблице.
+
+``` mermaid
+erDiagram
+    STUDENT {
+        long id PK
+        string name
+    }
+    
+    GROUP {
+        long id PK
+        int NUMBER
+        string DESCRIPTION
+    }
+    
+    GROUP ||--o{ STUDENT : "has"
+```
+
+``` java
+@Entity
+@Table(name = "demo_group", indexes = {
+    @Index(name = "idx_group_number", columnList = "number"),
+})
+public class Group {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID")
+    private Long id;
+
+    @Column(name="NUMBER", unique = true, nullable = false)
+    private int number;
+
+    @Column(name="DESCRIPTION", unique = false, nullable = false, length = 100)
+    private String description;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<Student> students = new ArrayList<>();
+}
+```
+
+``` java
+
+@Entity
+@Table(name = "demo_student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID")
+    private Long id;
+
+    @Column(name="NAME", unique = false, nullable = false, length = 100)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "GROUP_ID")
+    private Group group;
+}
+```
+
++ В одной  Group может может учиться много Student.
++ В классе Student используется @ManyToOne с внешним ключом (GROUP_ID).
++ В классе Group используется @OneToMany, указывая, что список students связан с group.
++ Параметр mappedBy = "group" указывает, что связь уже определена в Student.
+
+Параметры аннотации @OneToMany
+
+| Параметр         | Тип          | Описание |
+|------------------|-------------|----------|
+| `mappedBy`      | `String`     | Определяет поле в дочерней сущности, которое ссылается на родительскую. Используется для **двунаправленной связи**. |
+| `cascade`       | `CascadeType[]` | Определяет, какие операции с родительской сущностью должны автоматически применяться к дочерним (`ALL`, `PERSIST`, `MERGE`, `REMOVE`, `REFRESH`, `DETACH`). |
+| `fetch`         | `FetchType`  | Определяет стратегию загрузки связанных объектов: `LAZY` (лениво, по умолчанию) или `EAGER` (жадно). |
+| `orphanRemoval` | `boolean`    | Если `true`, то удаляет дочерние сущности из БД при их удалении из коллекции в родительской сущности. |
+
+##### Аннотация @ManyToMany в JPA/Hibernate
+
+Аннотация @ManyToMany используется для создания много-ко-многим отношений между сущностями в базе данных. Это означает, что одна сущность может быть связана с несколькими записями другой сущности, и наоборот.
+
+В реляционной базе данных связь “многие ко многим” реализуется через промежуточную таблицу, содержащую два внешних ключа.
+В JPA связь можно реализовать двумя способами:
+
++ Без явной промежуточной таблицы (Hibernate создаст её автоматически).
++ С явной промежуточной таблицей (используется @JoinTable).
+
+``` mermaid
+erDiagram
+    STUDENT {
+        long student_id PK
+        string name
+    }
+    
+    COURSE {
+        long course_id PK
+        string name
+    }
+    
+    STUDENT_COURSE {
+        long student_id FK
+        long course_id FK
+    }
+    
+    STUDENT ||--o{ STUDENT_COURSE : enrolled_in
+    COURSE ||--o{ STUDENT_COURSE : includes
+```
+
+```java
+@Entity
+@Table(name = "demo_student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID")
+    private Long id;
+
+    @Column(name="NAME", unique = false, nullable = false, length = 100)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "GROUP_ID")
+    private Group group;
+
+    @ManyToMany
+    private Set<Course> courses = new HashSet<>();
+}
+```
+
+```java
+@Entity
+@Table(name = "demo_student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID")
+    private Long id;
+
+    @Column(name="NAME", unique = false, nullable = false, length = 100)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "GROUP_ID")
+    private Group group;
+
+    @ManyToMany
+    private Set<Course> courses = new HashSet<>();
+}
+```
+
+@ManyToMany с явной промежуточной таблицей (@JoinTable)
+
+``` java
+     @ManyToMany
+     @JoinTable(
+         name = "demo_student_course",
+         joinColumns = @JoinColumn(name = "student_id"),
+         inverseJoinColumns = @JoinColumn(name = "course_id")
+     )
+     private Set<Course> courses = new HashSet<>();
+```
+
++ В @JoinTable мы явно указали имя таблицы (student_course).
++ joinColumns указывает внешний ключ для Student.
++ inverseJoinColumns указывает внешний ключ для Course.
+
+#### @MappedSuperclass в JPA/Hibernate
+
+Аннотация @MappedSuperclass используется в JPA для указания, что класс является родительским, но не является сущностью (@Entity). Это позволяет избежать создания отдельной таблицы для него, но его поля будут унаследованы в дочерних сущностях.
+
+Используется в случаях:
+
++ когда нужно избежать дублирования кода в нескольких сущностях.
++ когда не нужна отдельная таблица в базе данных для родительского класса.
++ когда нужно хранить общие атрибуты (id, created_at, updated_at) в одном месте.
+
+```java
+@MappedSuperclass
+public class AbstractEntity {
+        @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID")
+    private Long id;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+}
+
+```
+
+``` java
+@Entity
+@Table(name = "demo_course")
+public class Course extends AbstractEntity{
+
+    @Column(name="DESCRIPTION", unique = false, nullable = false, length = 100)
+    private String description;
+
+
+    @ManyToMany(mappedBy = "courses")
+    private Set<Student> students = new HashSet<>();
+}
+
+```
+
+#### Inheritance Mapping в JPA/Hibernate
+
+В объектно-ориентированном программировании наследование - это ключевой механизм повторного использования кода. Однако в реляционных базах данных отсутствует встроенная поддержка наследования. **JPA (Java Persistence API)** предоставляет механизм **Inheritance Mapping**, который позволяет маппировать иерархию классов на реляционные таблицы. Hibernate, как реализация JPA, поддерживает несколько стратегий наследования.
+
+
+##### Основные стратегии наследования в JPA**
+
+JPA предлагает три основных стратегии отображения наследования в БД:
+
+| Стратегия | Описание | Подходит для |
+|-----------|----------|--------------|
+| **Single Table (Одна таблица на всю иерархию)** | Все дочерние классы хранятся в одной таблице с дополнительным столбцом `discriminator`. | Высокая производительность, простота структуры, но может привести к разреженным данным. |
+| **Joined Table (Таблица на каждый класс)** | Каждая сущность имеет свою таблицу, и связи между ними устанавливаются через `JOIN`. | Гибкость, нормализация данных, но более сложные SQL-запросы. |
+| **Table per Class (Таблица на каждый класс)** | Каждый класс создаёт свою таблицу без использования `JOIN`. | Высокая скорость чтения, но возможны дубликаты данных. |
+
+---
+
+##### Single Table (Одна таблица на всю иерархию)
+
+```java
+import jakarta.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+public abstract class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+}
+
+@Entity
+@DiscriminatorValue("Student")
+public class Student extends User {
+    private String major;
+}
+
+@Entity
+@DiscriminatorValue("Teacher")
+public class Teacher extends User {
+    private String subject;
+}
+```
+
++ Все сущности Student и Teacher хранятся в одной таблице user.
++ Hibernate добавляет столбец type, который указывает тип (Student или Teacher).
+  
+**Плюсы**: Простота структуры, высокая производительность.
+
+**Минусы**: Пустые (NULL) значения в таблице для несвойственных полей.
+
+#####  Joined Table (Таблица на каждый класс)
+
+``` java
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+}
+
+@Entity
+public class Student extends User {
+    private String major;
+}
+
+@Entity
+public class Teacher extends User {
+    private String subject;
+}
+```
+
++ User создаётся как отдельная таблица.
++ Student и Teacher хранятся в отдельных таблицах с внешним ключом на User.
+  
+**Плюсы**: Нормализованная структура, нет дублирования данных.
+
+**Минусы**: JOIN-запросы усложняют выборку данных.
+
+##### Table per Class (Таблица на каждый класс)
+
+``` java
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+}
+
+@Entity
+public class Student extends User {
+    private String major;
+}
+
+@Entity
+public class Teacher extends User {
+    private String subject;
+}
+```
+
++ Каждый дочерний класс (Student, Teacher) создаёт свою таблицу.
++ В User нет общей таблицы.
+
+
+**Плюсы**: Высокая скорость поиска.
+
+**Минусы**: Дублирование общих полей (например, name хранится во всех таблицах).
+
+
+Выбор стратегии:
+
++ Single Table → Подходит для простых иерархий, где нет большого количества уникальных полей.
++ Joined Table → Хорошо подходит для гибких систем, где важна нормализация.
++ Table per Class → Уместно для производительности чтения, но с дублированием данных.

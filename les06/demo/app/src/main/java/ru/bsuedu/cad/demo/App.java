@@ -3,12 +3,14 @@
  */
 package ru.bsuedu.cad.demo;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+public class App {
+        private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        var ctx = new AnnotationConfigApplicationContext(ConfigHibernate.class);
+        //var singerDao = ctx.getBean(SingerDao.class);
     }
 }

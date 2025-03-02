@@ -24,7 +24,7 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation(libs.spring.context)
-    implementation(libs.spring.jdbc)
+    implementation(libs.spring.orm)
     implementation(libs.hikari)
     implementation(libs.jakarta.persistence.api)
     implementation(libs.hibernate.hikaricp)
