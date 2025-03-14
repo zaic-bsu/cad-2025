@@ -5,12 +5,14 @@
 guava = "33.3.1-jre"
 junit-jupiter = "5.11.1"
 spring-context="6.2.2"
+
 spring-orm="6.2.2"
 hibernate = "6.2.0.Final"
 jakarta-persistence = "3.1.0"
 hikari = "5.0.1"
-slf4j = "2.1.0-alpha1"
 h2 = "2.2.224"
+
+slf4j = "2.1.0-alpha1"
 logback-core = "1.5.6"
 logback-classic = "1.5.6"
 
