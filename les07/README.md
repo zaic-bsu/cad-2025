@@ -276,7 +276,6 @@ public class ConfigJpa {
 
 Изменение репозитория StudentDAO для использования EntityManager
 
-
 ``` java
 @Repository("jpaStudentRepository")
 public class StudentDAO implements StudentRepository {

@@ -13,6 +13,8 @@
   <!-- Логирование транзакций Spring -->
   <logger name="org.springframework.transaction" level="DEBUG"/>
 
+   <logger name="ru.bsuedu.cad.demo" level="DEBUG"/>
+
   <root level="debug">
     <appender-ref ref="STDOUT" />
   </root>

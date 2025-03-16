@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -24,6 +25,7 @@ import javax.sql.DataSource;
 @Import(ConfigBasic.class)
 @Configuration
 @ComponentScan(basePackages = "ru.bsuedu.cad.demo")
+@EnableJpaRepositories(basePackages = "ru.bsuedu.cad.demo.repository")
 @EnableTransactionManagement
 public class ConfigJpa {
     private static Logger LOGGER = LoggerFactory.getLogger(ConfigBasic.class);
