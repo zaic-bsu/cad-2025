@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.slf4j.api)
     implementation(libs.logback.core)
     implementation(libs.logback.classic)
+    implementation(libs.spring.data.jpa)
     runtimeOnly(libs.h2)
 }
 

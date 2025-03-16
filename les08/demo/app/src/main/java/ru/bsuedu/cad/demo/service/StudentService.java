@@ -1,8 +1,7 @@
 package ru.bsuedu.cad.demo.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.transaction.Transactional;
 import ru.bsuedu.cad.demo.entity.Student;
@@ -15,7 +14,7 @@ public class StudentService {
     final private StudentRepository studentRepository;
     final private GroupRepository groupRepository;
 
-    public StudentService(@Qualifier("jpaStudentRepository") StudentRepository studentRepository, @Qualifier("jpaGroupRepository") GroupRepository groupRepository) {
+    public StudentService(StudentRepository studentRepository,  GroupRepository groupRepository) {
         this.studentRepository = studentRepository;
         this.groupRepository = groupRepository;
     }
