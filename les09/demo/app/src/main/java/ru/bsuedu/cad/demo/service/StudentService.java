@@ -50,4 +50,8 @@ public class StudentService {
         students.forEach(student -> System.out.println(student.getName()));
     }
 
+    public List<Student> findAllStudents() {
+        return studentRepository.findAll();
+    }
+
 }
