@@ -1,4 +1,4 @@
-#
+# Сервлеты. Разработка Web-приложений
 
 ## Введение в разработку Web-приложений на Java
 
@@ -425,4 +425,3 @@ public class FirstServlet extends HttpServlet {
     }
 }
 ```
-
