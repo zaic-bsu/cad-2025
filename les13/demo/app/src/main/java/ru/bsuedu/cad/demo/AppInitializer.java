@@ -1,22 +1,27 @@
 package ru.bsuedu.cad.demo;
 
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRegistration;
+import ru.bsuedu.cad.demo.config.ConfigDB;
+import ru.bsuedu.cad.demo.config.ConfigSecurity;
+import ru.bsuedu.cad.demo.config.ConfigWeb;
 
 
-public class AppInitializer implements WebApplicationInitializer {
+public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
     @Override
-    public void onStartup(ServletContext container) throws ServletException {
-        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(Config.class);
-
-        ServletRegistration.Dynamic dispatcher = container.addServlet("dispatcher", new DispatcherServlet(context));
-        dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/");
+    protected Class<?>[] getRootConfigClasses() {
+            return new Class<?>[] {  ConfigDB.class, ConfigSecurity.class};
     }
+
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class<?>[] { ConfigWeb.class };
+    }
+
+    @Override
+    protected String[] getServletMappings() {
+        return new String[] { "/" };
+    }
+    
 }

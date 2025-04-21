@@ -41,13 +41,14 @@ dependencies {
     implementation(libs.logback.classic)
     
     providedCompile(libs.servlet.api)
-    runtimeOnly(libs.h2)
-    implementation("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2") // API
-    implementation("org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1") // реализация
+    runtimeOnly(libs.h2) 
 
     implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
     implementation("org.thymeleaf:thymeleaf-spring6:3.1.2.RELEASE") // для Spring 6 / Jakarta
-        //implementation(libs.spring.orm)
+
+    // Spring Security
+    implementation("org.springframework.security:spring-security-web:6.2.2")
+    implementation("org.springframework.security:spring-security-config:6.2.2")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

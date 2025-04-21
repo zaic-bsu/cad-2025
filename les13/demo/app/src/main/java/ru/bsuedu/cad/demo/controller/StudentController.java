@@ -2,11 +2,12 @@ package ru.bsuedu.cad.demo.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,14 +17,14 @@ import ru.bsuedu.cad.demo.service.GroupService;
 import ru.bsuedu.cad.demo.service.StudentService;
 
 @Controller
-@RequestMapping("/thymleaf/students")
-public class ThymleafStudentController {
+@RequestMapping("/students")
+public class StudentController {
     
     final private StudentService studentService;
     final private GroupService groupService;
     
     
-    public ThymleafStudentController(StudentService studentService, GroupService groupService) {
+    public StudentController(StudentService studentService, GroupService groupService) {
         this.studentService = studentService;
         this.groupService = groupService;
     }
@@ -31,8 +32,11 @@ public class ThymleafStudentController {
 
     @GetMapping("")
     public String getStudents(Model model) {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();      
         List<Student> students = studentService.findAllStudents();
         model.addAttribute("students", students);
+        model.addAttribute("name", currentPrincipalName);
         return "student";
     }
 
@@ -40,6 +44,9 @@ public class ThymleafStudentController {
     public String showForm(Model model) {
         model.addAttribute("student", new Student());
         model.addAttribute("groups", groupService.getAllGroup());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName(); 
+        model.addAttribute("name", currentPrincipalName);
         return "create-student";
     }
 
@@ -47,6 +54,6 @@ public class ThymleafStudentController {
     public String submitForm(@ModelAttribute StudentModel student) {
         studentService.createStudent(student.getName(), student.getGroup());
         System.out.println("Сохранён студент: " + student.getName() + " (" + student.getGroup() + ")");
-        return "redirect:/thymleaf/students"; // переадресация на список
+        return "redirect:/students"; // переадресация на список
     }
 }
