@@ -33,7 +33,7 @@ import jakarta.persistence.EntityManagerFactory;
 @EnableJpaRepositories(basePackages = "ru.bsuedu.cad.demo.repository")
 @EnableTransactionManagement
 public class TestConfigDB {
-    //private static Logger LOGGER = LoggerFactory.getLogger(TestConfigDB.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TestConfigDB.class);
 
     @Bean
     public DataSource dataSource() {
@@ -65,6 +65,7 @@ public class TestConfigDB {
         properties.put(Environment.MAX_FETCH_DEPTH, 3);
         properties.put(Environment.STATEMENT_BATCH_SIZE, 10);
         properties.put(Environment.STATEMENT_FETCH_SIZE, 50);
+        properties.put(Environment.HBM2DDL_IMPORT_FILES, "");
         em.setJpaProperties(properties);
 
         return em;
