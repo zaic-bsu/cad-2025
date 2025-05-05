@@ -181,6 +181,60 @@ dependencies {
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+@Configuration
+@ComponentScans({
+    @ComponentScan(basePackages = "ru.bsuedu.cad.demo.entity"), 
+    @ComponentScan(basePackages = "ru.bsuedu.cad.demo.repository"),
+    @ComponentScan(basePackages = "ru.bsuedu.cad.demo.service")
+})
+@EnableJpaRepositories(basePackages = "ru.bsuedu.cad.demo.repository")
+@EnableTransactionManagement
+public class TestConfigDB {
+    //private static Logger LOGGER = LoggerFactory.getLogger(TestConfigDB.class);
+
+    @Bean
+    public DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                    .setType(EmbeddedDatabaseType.H2)
+                    .build();
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+
+        em.setPackagesToScan("ru.bsuedu.cad.demo.entity");
+
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        vendorAdapter.setShowSql(true);
+        vendorAdapter.setGenerateDdl(true);
+        vendorAdapter.setDatabasePlatform("org.hibernate.dialect.H2Dialect");
+        em.setJpaVendorAdapter(vendorAdapter);
+
+        // Дополнительные свойства JPA/Hibernate
+        Properties properties = new Properties();
+        properties.put(Environment.HBM2DDL_AUTO, "create-drop");
+        properties.put(Environment.DIALECT, "org.hibernate.dialect.H2Dialect");
+        properties.put(Environment.FORMAT_SQL, true);
+        properties.put(Environment.USE_SQL_COMMENTS, false);
+        properties.put(Environment.SHOW_SQL, true);
+        properties.put(Environment.MAX_FETCH_DEPTH, 3);
+        properties.put(Environment.STATEMENT_BATCH_SIZE, 10);
+        properties.put(Environment.STATEMENT_FETCH_SIZE, 50);
+        em.setJpaProperties(properties);
+
+        return em;
+    }
+    @Bean
+    public PlatformTransactionManager transactionManager(
+            @Autowired EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+        return transactionManager;
+    }
+}
 ```
 
 + @ExtendWith(SpringExtension.class) — подключает поддержку Spring в JUnit 5.
@@ -208,33 +262,52 @@ Spring автоматически выполнит эти скрипты пер�
 
 ```java
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
+@ContextConfiguration(classes = TestConfigDB.class)
 @Transactional
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class StudentDaoTest {
+@Rollback
+class StudentServiceIntegrationTest {
 
     @Autowired
-    private StudentDao studentDao;
+    private StudentService studentService;
 
     @Autowired
-    private GroupDao groupDao;
+    private GroupRepository groupRepository;
 
-    private Group group;
+    @Autowired
+    private StudentRepository studentRepository;
 
-    @BeforeAll
+    @BeforeEach
     void setup() {
-        group = new Group("Group A");
-        groupDao.save(group);
+        Group group = new Group();
+        group.setNumber(101);
+        group.setDescription("101");
+        groupRepository.save(group);
     }
 
     @Test
-    void testSaveAndFindStudent() {
-        Student student = new Student("Ivan", group);
-        studentDao.save(student);
+    void testCreateStudentAndFindById() {
+        studentService.createStudent("Alex", 101);
 
-        Student found = studentDao.findById(student.getId());
-        assertNotNull(found);
-        assertEquals("Ivan", found.getName());
+        List<Student> students = studentRepository.findAll();
+        assertEquals(1, students.size());
+
+        Student student = students.get(0);
+        assertEquals("Alex", student.getName());
+        assertEquals(101, student.getGroup().getNumber());
+
+        Student found = studentService.findById(student.getId());
+        assertEquals(student.getId(), found.getId());
+    }
+
+    @Test
+    void testFindAllStudents() {
+        studentService.createStudent("Anna", 101);
+        studentService.createStudent("Dmitry", 101);
+
+        List<Student> students = studentService.findAllStudents();
+        assertEquals(2, students.size());
     }
 }
 ```
+
+

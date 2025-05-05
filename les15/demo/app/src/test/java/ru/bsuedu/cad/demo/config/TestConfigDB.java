@@ -1,21 +1,44 @@
+package ru.bsuedu.cad.demo.config;
+
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
-@Configuration
-@ComponentScan(basePackages = "ru.bsuedu.cad.demo")
-@EnableJpaRepositories(basePackages = "ru.bsuedu.cad.demo.repository")
-@PropertySource("classpath:db/jdbc.properties")
-@EnableTransactionManagement
-public class ConfigDB {
-    private static Logger LOGGER = LoggerFactory.getLogger(ConfigDB.class);
+import org.hibernate.cfg.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-    @Bean(destroyMethod = "close")
+import jakarta.persistence.EntityManagerFactory;
+
+@Configuration
+@ComponentScans({
+    @ComponentScan(basePackages = "ru.bsuedu.cad.demo.entity"), 
+    @ComponentScan(basePackages = "ru.bsuedu.cad.demo.repository"),
+    @ComponentScan(basePackages = "ru.bsuedu.cad.demo.service")
+})
+@EnableJpaRepositories(basePackages = "ru.bsuedu.cad.demo.repository")
+@EnableTransactionManagement
+public class TestConfigDB {
+    //private static Logger LOGGER = LoggerFactory.getLogger(TestConfigDB.class);
+
+    @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                     .setType(EmbeddedDatabaseType.H2)
-                    //.addScript("classpath:schema.sql")
-                    //.addScript("classpath:data.sql")
                     .build();
     }
 
@@ -46,7 +69,6 @@ public class ConfigDB {
 
         return em;
     }
-
     @Bean
     public PlatformTransactionManager transactionManager(
             @Autowired EntityManagerFactory entityManagerFactory) {
