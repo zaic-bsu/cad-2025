@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58ff2a62-9e14-448d-a3a4-e4cfaacdf657" name="Changes" comment="" />
+    <list default="true" id="58ff2a62-9e14-448d-a3a4-e4cfaacdf657" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/entity/Group.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/entity/Student.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/security/StudentViewRole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/security/StudentViewRowRole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/view/group/GroupListView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/view/student/StudentDetailView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/bsuedu/cad/demo/view/student/StudentListView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/ru/bsuedu/cad/demo/liquibase/changelog/2025/05/19-110545-5619e0ad.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/ru/bsuedu/cad/demo/view/group/group-list-view.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/ru/bsuedu/cad/demo/view/student/student-detail-view.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/ru/bsuedu/cad/demo/view/student/student-list-view.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,7 +81,6 @@
     "Jmix Application.Demo Jmix Application.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "android.gradle.sync.needed": "true",
     "com.haulmont.jmixstudio.intellij.ui.cubatree.toolwindow.ToolWindowOpener.firstProjectStart": "false",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "main",
