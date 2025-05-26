@@ -19,7 +19,7 @@
 15. 🟢 [Тестирование приложений. Интеграционное тестирование](./les15/README.md)
 16. 🟢 [Введение в Spring Boot](./les16/README.md)
 17. 🟢 [Low-код платформы на основе фреймворка Spring. Jmix.](./les17/README.md)
-18. 🟢 [Контейнеризация Spring приложений. Docker.](./les17/README.md)
+18. 🟢 [Контейнеризация Spring приложений. Docker.](./les18/README.md)
 
 ## Лабораторные работы
 
